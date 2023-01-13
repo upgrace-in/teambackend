@@ -313,4 +313,4 @@ app.get('/fetchLoanLeads', async (req, res) => {
     }
 })
 
-// app.listen(7070, () => console.log("Running"))
+app.listen(4000, () => console.log("Running"))
