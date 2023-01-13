@@ -6,8 +6,8 @@ const fs = require('fs')
 const crypto = require("crypto");
 
 // Multer
-// const multer = require('multer')
-// const upload = multer({ dest: '/images' })
+const multer = require('multer')
+const upload = multer({ dest: '/images' })
 
 const mailToAdmin = require('/mailSystem/mailAdmin')
 const mailToUser = require('/mailSystem/mailUser')
@@ -170,31 +170,31 @@ app.get('/checkUserExists', async (req, res) => {
 })
 
 //Receipt
-// app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
-//     try {
-//         const data = req.body
-//         const imagePath = req.file.path
-//         // Save this data to a database properly
-//         await getUsers(data['emailAddress'])
-//             .then(async (val) => {
-//                 // No need to update the credits here
-//                 // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) - parseFloat(data.inputRecAmt) })
-//                 await Receipt.doc(data.uid).set({ ...data, imageFile: imagePath })
-//             });
-//         res.send({ msg: true })
-//     } catch (e) {
-//         console.log(e)
-//         res.send({ msg: false })
-//     }
-// })
+app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
+    try {
+        const data = req.body
+        const imagePath = req.file.path
+        // Save this data to a database properly
+        await getUsers(data['emailAddress'])
+            .then(async (val) => {
+                // No need to update the credits here
+                // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) - parseFloat(data.inputRecAmt) })
+                await Receipt.doc(data.uid).set({ ...data, imageFile: imagePath })
+            });
+        res.send({ msg: true })
+    } catch (e) {
+        console.log(e)
+        res.send({ msg: false })
+    }
+})
 
-// app.get('/images/:imageName', (req, res) => {
-//     // do a bunch of if statements to make sure the user is 
-//     // authorized to view this image, then
-//     const imageName = req.params.imageName
-//     const readStream = fs.createReadStream(`images/${imageName}`)
-//     readStream.pipe(res)
-// })
+app.get('/images/:imageName', (req, res) => {
+    // do a bunch of if statements to make sure the user is 
+    // authorized to view this image, then
+    const imageName = req.params.imageName
+    const readStream = fs.createReadStream(`images/${imageName}`)
+    readStream.pipe(res)
+})
 
 app.get('/fetchReceipts', async (req, res) => {
     const data = req.query
