@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const { db } = require('/config')
+const { db } = require('./config')
 const app = express()
 const fs = require('fs')
 const crypto = require("crypto");
@@ -9,9 +9,9 @@ const crypto = require("crypto");
 const multer = require('multer')
 const upload = multer({ dest: '/images' })
 
-const mailToAdmin = require('/mailSystem/mailAdmin')
-const mailToUser = require('/mailSystem/mailUser')
-const signupMail = require('/mailSystem/signupMail')
+const mailToAdmin = require('./mailSystem/mailAdmin')
+const mailToUser = require('./mailSystem/mailUser')
+const signupMail = require('./mailSystem/signupMail')
 
 const User = db.collection('Users')
 const Lead = db.collection('Leads')
@@ -143,7 +143,7 @@ app.post('/addLead', async (req, res) => {
     }
 })
 
-app.get('/fetchLeads', async (req, res) => {
+app.get('/', async (req, res) => {
     res.send("Hare Krishna")
 });
 
@@ -303,4 +303,3 @@ app.get('/fetchLoanLeads', async (req, res) => {
 })
 
 module.exports = app
-
