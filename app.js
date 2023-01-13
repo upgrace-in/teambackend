@@ -314,3 +314,6 @@ app.get('/fetchLoanLeads', async (req, res) => {
 })
 
 app.listen(4000, () => console.log("Running"))
+
+module.exports = app
+
