@@ -18,6 +18,8 @@ const Lead = db.collection('Leads')
 const Receipt = db.collection('Receipts')
 const Logs = db.collection('Logs')
 
+app.listen(4000, () => console.log("Running"))
+
 // Sessions
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
@@ -30,19 +32,6 @@ app.use(cookieParser());
 
 app.use(express.json())
 app.use(cors())
-// Changed
-// let loanOfficer = {
-//     'Victor Mackliff': 'victormackliff@gmail.com',
-//     'Sam Zepeda': 'SZepeda@sl-Lending.com',
-//     'Gabe Lozano': 'glozano@sl-lending.com',
-//     'Chris Miranda': 'cmiranda@sl-lending.com'
-// }
-let loanOfficer = {
-    'Victor Mackliff': 'thedesiretree47@gmail.com',
-    'Sam Zepeda': 'thedesiretree47@gmail.com',
-    'Gabe Lozano': 'thedesiretree47@gmail.com',
-    'Chris Miranda': 'thedesiretree47@gmail.com'
-}
 let liveSiteAdd = "https://teamagentadvantage.upgrace.in"
 let adminMail = "thedesiretree47@gmail.com"
 
@@ -312,8 +301,6 @@ app.get('/fetchLoanLeads', async (req, res) => {
         res.send({ msg: false })
     }
 })
-
-app.listen(4000, () => console.log("Running"))
 
 module.exports = app
 
