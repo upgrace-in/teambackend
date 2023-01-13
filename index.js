@@ -1,17 +1,17 @@
 const express = require('express')
 const cors = require('cors')
-const { db } = require('./config')
+const { db } = require('/config')
 const app = express()
 const fs = require('fs')
 const crypto = require("crypto");
 
 // Multer
 const multer = require('multer')
-const upload = multer({ dest: 'images/' })
+const upload = multer({ dest: '/images' })
 
-const mailToAdmin = require('./mailSystem/mailAdmin')
-const mailToUser = require('./mailSystem/mailUser')
-const signupMail = require('./mailSystem/signupMail')
+const mailToAdmin = require('/mailSystem/mailAdmin')
+const mailToUser = require('/mailSystem/mailUser')
+const signupMail = require('/mailSystem/signupMail')
 
 const User = db.collection('Users')
 const Lead = db.collection('Leads')
