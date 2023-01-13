@@ -7,7 +7,7 @@ const crypto = require("crypto");
 
 // Multer
 const multer = require('multer')
-const upload = multer({ dest: '/images' })
+const upload = multer({ dest: 'images' })
 
 const mailToAdmin = require('./mailSystem/mailAdmin')
 const mailToUser = require('./mailSystem/mailUser')
