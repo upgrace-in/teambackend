@@ -10,6 +10,7 @@ const multer = require('multer')
 const upload = multer({ dest: 'images' })
 
 const mailToAdmin = require('./mailSystem/mailAdmin')
+const mailForgotPassword = require('./mailSystem/mailForgotPassword')
 const mailToUser = require('./mailSystem/mailUser')
 const signupMail = require('./mailSystem/signupMail')
 
@@ -108,6 +109,44 @@ app.post('/loginuser', async (req, res) => {
                 loginSession(req, res, null, 'Password unmatched !!!')
         } else {
             loginSession(req, res, null, "User doesn't exists !!!")
+        }
+    })
+})
+
+// Match the code & update the database with new password
+app.post('/update_password', async (req, res) => {
+    const data = req.body
+    // Fetching the user from db
+    await getUsers(data['emailAddress']).then(async (val) => {
+        if (val['response'] === true) {
+            // Match the code
+            if (data['code'] === val.code) {
+                await User.doc(data['emailAddress']).update({ password: data.updatedpassword })
+                loginSession(req, res, val['data'], 'Logging in...')
+            } else
+                loginSession(req, res, null, 'Something went wrong !!!')
+        } else {
+            loginSession(req, res, null, "User doesn't exists !!!")
+        }
+    })
+})
+
+// Send code to email & to the db
+app.post('/sendCode', async (req, res) => {
+    const data = req.body
+    // Fetching the user from db
+    await getUsers(data['emailAddress']).then(async (val) => {
+        if (val['response'] === true) {
+            // generate a 6 digit randCode
+            let randCode = Math.floor(100000 + Math.random() * 900000)
+            // Updating the code to the db
+            await User.doc(data['emailAddress']).set({ code: randCode })
+            // send the code to the emailAddresss
+            mailForgotPassword(data['emailAddress'], "Here is your password reset code !!!", data)
+
+            res.send({ msg: "Password Sent !!!" })
+        } else {
+            res.send({ msg: "Something went wrong!!!" })
         }
     })
 })
@@ -288,7 +327,7 @@ app.post('/updateCredits', async (req, res) => {
 // Fetching loan officers lead
 app.get('/fetchLoanLeads', async (req, res) => {
     const data = req.query
-    try {   
+    try {
         const snapshot = await Lead.where('offerAcceptedStatus.selectedloanOfficer', '==', data.loanOfficer).get();
         if (snapshot.empty) {
             res.send({ msg: false })
