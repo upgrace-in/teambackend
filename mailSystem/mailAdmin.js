@@ -1,6 +1,13 @@
 const Sendmail = require('./sendMail.js')
 var dateTime = require('node-datetime');
 
+function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
+}
+
+function formatPhone(phone) {
+    return "(" + phone.substring(0, 3) + ")" + " " + phone.substring(3, 6) + "-" + phone.substring(6, 11)
+}
 
 function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     var dt = dateTime.create();
@@ -13,12 +20,12 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
             <span className="fw-7" style="font-weight: 700;
             font-size: 1.5rem;">On `+ data.clientReady + `</span>
         </p>`
-    } else {    
+    } else {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+data.name+`</span>, would like you to call her first
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call her first
             <br/>
-            <a href="tel:`+data.phoneNumber+`"><span id="userFname">`+data.phoneNumber+`</span></a>
+            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
     }
     html = `<!DOCTYPE html>
@@ -47,26 +54,24 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                 <img src="`+ liveSiteAdd + `/emailTemps/tick.png" alt="">
             </div>
             <p style="color: #fff">
-                On <span id="dateTime" style="color: #fff;">`+realTimeDateTime+`</span>
+                On <span id="dateTime" style="color: #fff;">`+ realTimeDateTime + `</span>
                 <br />
-                <span id="userName" style="color: #fff;">`+ data.name + `'s</span>
-                &lt;<span id="emailAddress" style="color: #fff;">`+ data.emailAddress + `</span>&gt;
-                registered a new lead.
+                <span id="userName" style="color: #fff;">`+ capitalize(data.name) + ` </span>registered a new lead.
             </p>
             <table className="table table-striped" style="color: #fff; margin-right: auto; margin-left: auto; text-align: center;">
                 <tr>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
-                                id="leadName">`+ data.fname + ' ' + data.lname + `</td>
+                                id="leadName">`+ capitalize(data.fname) + ' ' + capitalize(data.lname) + `</td>
                     <td style="padding: 5px; background: #79559d;
-                                color: #fff;
+                                color: #f277e7 !important;
                                 border-top: 1px solid #dee2e6;" 
                                 id="leadEmail">`+ data.inputEmail + `</td>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
-                                id="leadPhone">`+ data.inputPhone + `</td>
+                                id="leadPhone">`+ formatPhone(data.inputPhone) + `</td>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
@@ -94,7 +99,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     
     </html>`
 
-    Sendmail(toMail, subject, html)
+    Sendmail("itz.kartik7@gmail.com", subject, html)
 }
 
 module.exports = mailToAdmin
