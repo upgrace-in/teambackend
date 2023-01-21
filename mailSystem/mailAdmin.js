@@ -99,7 +99,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     
     </html>`
 
-    Sendmail("itz.kartik7@gmail.com", subject, html)
+    Sendmail(toMail, subject, html)
 }
 
 module.exports = mailToAdmin
