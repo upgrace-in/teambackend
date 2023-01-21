@@ -64,10 +64,10 @@ async function getUsers(emailAddress) {
     }
 }
 
-async function registerOrUpdate(subject, process.env.liveSiteAdd, req, res, data, response_status) {
+async function registerOrUpdate(subject, liveSiteAdd, req, res, data, response_status) {
     try {
         await User.doc(data['emailAddress']).set(data)
-        signupMail(data['emailAddress'], subject, process.env.liveSiteAdd)
+        signupMail(data['emailAddress'], subject, liveSiteAdd)
         loginSession(req, res, data, response_status)
     } catch (e) {
         res.send({ session: null, msg: "Something went wrong !!!" })
