@@ -48,7 +48,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
         <div className="container mx-auto text-center" style="width: 80%; text-align: center; margin-right: auto;
         margin-left: auto;">
             <div className="col mt-4" style="margin-top: 20px;">
-                <img src="`+ liveSiteAdd + `/emailTemps/logoWhite.png" alt="">
+                <img style="width: 20%" src="`+ liveSiteAdd + `/emailTemps/logoWhite.png" alt="">
             </div>
             <div className="col mt-4" style="margin-top: 20px;">
                 <img src="`+ liveSiteAdd + `/emailTemps/tick.png" alt="">
