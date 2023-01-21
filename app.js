@@ -66,7 +66,7 @@ async function getUsers(emailAddress) {
 
 async function registerOrUpdate(subject, liveSiteAdd, req, res, data, response_status) {
     try {
-        await User.doc(data['emailAddress']).set(data)
+        await User.doc(data['emailAddress']).update(data)
         signupMail(data['emailAddress'], subject, liveSiteAdd)
         loginSession(req, res, data, response_status)
     } catch (e) {
@@ -263,6 +263,22 @@ app.get('/fetchReceipts', async (req, res) => {
     }
 })
 
+// app.get('/fetchLogs', async (req, res) => {
+//     const data = req.query
+//     try {
+//         const snapshot = await Receipt.where('emailAddress', '==', data['emailAddress']).get();
+//         if (snapshot.empty) {
+//             res.send({ msg: false })
+//         } else {
+//             res.send({ msg: true, data: snapshot.docs.map(doc => doc.data()) })
+//         }
+//     }
+//     catch (e) {
+//         console.log(e)
+//         res.send({ msg: false })
+//     }
+// })
+
 // Admin Console or Loan Officer
 // Fetch all leads
 app.get('/fetchAllLeads', async (req, res) => {
@@ -303,7 +319,7 @@ app.post('/deleteLead', async (req, res) => {
         // Deleting the lead
         await Lead.doc(data['uid']).delete();
         // Update the log
-        await Logs.doc(data.emailAddress).set({ msg: `Your lead: ` + data.uid + ` name: ` + data.leadMailAddress + ` has been deleted by us.` })
+        // await Logs.doc(data.emailAddress).set({ msg: `Your lead: ` + data.uid + ` name: ` + data.leadMailAddress + ` has been deleted by us.` })
         res.send({ msg: true })
     }
     catch (e) {
@@ -327,7 +343,7 @@ app.post('/updateCredits', async (req, res) => {
         // update the credit of receipt
         await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt })
         // updating the logs
-        await Logs.doc(data.emailAddress).set({ msg: `Your credit is updated to: ` + credits + ` due to your recent uploaded receipt (` + data.uid + `).` })
+        // await Logs.doc(data.emailAddress).set({ msg: `Your credit is updated to: ` + credits + ` due to your recent uploaded receipt (` + data.uid + `).` })
         res.send({ msg: true })
     }
     catch (e) {
