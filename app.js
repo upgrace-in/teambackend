@@ -5,6 +5,7 @@ const app = express()
 const fs = require('fs')
 const crypto = require("crypto");
 
+require('dotenv').config()
 // Multer
 const multer = require('multer')
 const upload = multer({ dest: 'images' })
@@ -19,7 +20,7 @@ const Lead = db.collection('Leads')
 const Receipt = db.collection('Receipts')
 const Logs = db.collection('Logs')
 
-app.listen(4000, () => console.log("Running"))
+app.listen(process.env.PORT, () => console.log("Running"))
 
 // Sessions
 const cookieParser = require("cookie-parser");
@@ -33,8 +34,6 @@ app.use(cookieParser());
 
 app.use(express.json())
 app.use(cors())
-let liveSiteAdd = "https://teamagentadvantage.upgrace.in"
-let adminMail = "thedesiretree47@gmail.com"
 
 
 
@@ -65,10 +64,10 @@ async function getUsers(emailAddress) {
     }
 }
 
-async function registerOrUpdate(subject, liveSiteAdd, req, res, data, response_status) {
+async function registerOrUpdate(subject, process.env.liveSiteAdd, req, res, data, response_status) {
     try {
         await User.doc(data['emailAddress']).set(data)
-        signupMail(data['emailAddress'], subject, liveSiteAdd)
+        signupMail(data['emailAddress'], subject, process.env.liveSiteAdd)
         loginSession(req, res, data, response_status)
     } catch (e) {
         res.send({ session: null, msg: "Something went wrong !!!" })
@@ -83,12 +82,12 @@ app.post('/createuser', async (req, res) => {
             if (val['response'] === false) {
                 // Register User
                 await User.doc(data['emailAddress']).set({ ...data, credits: 0 })
-                signupMail(data['emailAddress'], "Successfully Registered", liveSiteAdd)
+                signupMail(data['emailAddress'], "Successfully Registered", process.env.liveSiteAdd)
                 loginSession(req, res, data, "Successfully Registered !!!")
             } else {
                 // check if its a update request
                 if (data.update_it === true)
-                    registerOrUpdate("Your account information has been updated successfully !!!", liveSiteAdd, req, res, { ...data, credits: 0 }, "Updated Successfully !!!")
+                    registerOrUpdate("Your account information has been updated successfully !!!", process.env.liveSiteAdd, req, res, { ...data, credits: 0 }, "Updated Successfully !!!")
                 else
                     // Response should be Try to login 
                     loginSession(req, res, null, "User exists try to login...")
@@ -164,15 +163,15 @@ app.post('/addLead', async (req, res) => {
 
         // Changed
         // To the Admin
-        mailToAdmin(adminMail, "Someone Added A Lead", data, liveSiteAdd)
+        mailToAdmin(process.env.adminMail, "Someone Added A Lead", data, process.env.liveSiteAdd)
 
         if (data['offerAcceptedStatus']['selectedloanOfficer'] !== undefined) {
             // To the loan Officer
-            mailToAdmin(data['offerAcceptedStatus']['selectedloanOfficer'], "Someone Choosed You In A Lead", data, liveSiteAdd)
+            mailToAdmin(data['offerAcceptedStatus']['selectedloanOfficer'], "New Agent Advantage Lead", data, process.env.liveSiteAdd)
         }
 
         // To the User
-        mailToUser(data['emailAddress'], "Lead been successfully uploaded !!!", data, liveSiteAdd)
+        mailToUser(data['emailAddress'], "Lead been successfully uploaded !!!", data, process.env.liveSiteAdd)
 
         res.send({ msg: true })
 
