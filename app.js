@@ -185,6 +185,15 @@ app.get('/', async (req, res) => {
     res.send("Hare Krishna")
 });
 
+app.get('/fetchLoanOfficers', async (req, res) => {
+    const snapshot = await User.where('is_loanOfficer', '==', true).get();
+    if (snapshot.empty) {
+        res.send({ msg: false })
+    } else {
+        res.send({ msg: true, data: snapshot.docs.map(doc => doc.data()) })
+    }
+})
+
 app.get('/fetchLeads', async (req, res) => {
     const data = req.query
     const snapshot = await Lead.where('emailAddress', '==', data['emailAddress']).get();
@@ -229,9 +238,13 @@ app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
 app.get('/images/:imageName', (req, res) => {
     // do a bunch of if statements to make sure the user is 
     // authorized to view this image, then
-    const imageName = req.params.imageName
-    const readStream = fs.createReadStream(`images/${imageName}`)
-    readStream.pipe(res)
+    try {
+        const imageName = req.params.imageName
+        const readStream = fs.createReadStream(`images/${imageName}`)
+        readStream.pipe(res)
+    } catch (e) {
+        console.log(e);
+    }
 })
 
 app.get('/fetchReceipts', async (req, res) => {
