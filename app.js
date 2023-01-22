@@ -332,14 +332,17 @@ app.post('/deleteLead', async (req, res) => {
 // Update the credit of the user
 app.post('/updateCredits', async (req, res) => {
     const data = req.body
-    // parameters: uid, recAmt, emailAddress
     try {
         let credits
         await getUsers(data['emailAddress'])
             .then(async (val) => {
-                // Updating the credits
-                credits = parseFloat(val.data.credits) - parseFloat(data.inputRecAmt)
-                await User.doc(data['emailAddress']).update({ credits: credits })
+                // Checking if he has that much credit or not
+                if (parseFloat(val.data.credits) > parseFloat(data.inputRecAmt)) {
+                    // Updating the credits
+                    credits = parseFloat(val.data.credits) - parseFloat(data.inputRecAmt)
+                    await User.doc(data['emailAddress']).update({ credits: credits })
+                } else
+                    throw new Error;
             });
         // update the credit of receipt
         await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt })

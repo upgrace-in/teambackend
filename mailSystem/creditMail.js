@@ -77,7 +77,6 @@ function creditMail(toMail, subject, data, liveSiteAdd) {
             </div>
         </div>
     </body>
-    
     </html>`
 
     Sendmail(toMail, subject, html)

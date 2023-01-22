@@ -60,7 +60,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                 <br />
                 <span id="userName" style="color: #fff;">`+ capitalize(data.name) + ` </span>registered a new lead.
             </p>
-            <table className="table table-striped" style="color: #fff; margin-right: auto; margin-left: auto; text-align: center;">
+            <table className="table table-striped" style="overflow: auto; color: #fff; margin-right: auto; margin-left: auto; text-align: center;">
                 <tr>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
