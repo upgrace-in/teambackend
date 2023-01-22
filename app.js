@@ -14,6 +14,7 @@ const mailToAdmin = require('./mailSystem/mailAdmin')
 const mailForgotPassword = require('./mailSystem/mailForgotPassword')
 const mailToUser = require('./mailSystem/mailUser')
 const signupMail = require('./mailSystem/signupMail')
+const creditMail = require('./mailSystem/creditMail')
 
 const User = db.collection('Users')
 const Lead = db.collection('Leads')
@@ -368,5 +369,39 @@ app.get('/fetchLoanLeads', async (req, res) => {
         res.send({ msg: false })
     }
 })
+
+// Send weekly email showing them thier credits
+async function sendcreditMail() {
+    try {
+        // Fetch the users
+        const snapshot = await User.get();
+
+        if (snapshot.empty) {
+            throw new Error;
+        } else {
+            // Loop trough thier credits
+            snapshot.docs.map(async doc => {
+                data = doc.data()
+                // send to creditMail
+                if ((data.is_admin === false) && (data.is_loanOfficer === false) && (data.credits > 0)) {
+                    console.log(data);
+                    creditMail(
+                        "itz.kartik7@gmail.com", "Reminder: Here ‘s how to keep track of your marketing credits!",
+                        data,
+                        process.env.liveSiteAdd
+                    )
+                }
+            })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        return false
+    }
+}
+
+setTimeout(async () => {
+    await sendcreditMail()
+}, process.env.TIMETOSEND_CREDITMAIL)
 
 module.exports = app

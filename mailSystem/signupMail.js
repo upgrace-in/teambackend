@@ -2,14 +2,13 @@ const Sendmail = require('./sendMail.js')
 
 function signupMail(toMail, subject, liveSiteAdd) {
 
-    
+
     html = `<!DOCTYPE html>
     <html lang="en">
     
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&amp;display=swap"
     </head>
     
@@ -44,7 +43,10 @@ function signupMail(toMail, subject, liveSiteAdd) {
                 margin-top: 10px;
                 text-decoration: none;">Upload leads now</a>
                 <div className="col mt-4" style="margin-top: 30px;">
-                    <img style="width: 20%" src="`+ liveSiteAdd + `/emailTemps/logoBlack.png" alt="">
+                    <img style="display: block;
+                    max-width: 100%;
+                    height: auto;
+                    width: 20%; src="`+ liveSiteAdd + `/emailTemps/logoBlack.png" alt="">
                 </div>
                 <br/><br/>
             </div>

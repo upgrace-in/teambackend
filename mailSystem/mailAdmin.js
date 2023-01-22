@@ -34,7 +34,6 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     </head>
     
@@ -48,7 +47,10 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
         <div className="container mx-auto text-center" style="width: 80%; text-align: center; margin-right: auto;
         margin-left: auto;">
             <div className="col mt-4" style="margin-top: 20px;">
-                <img style="width: 20%" src="`+ liveSiteAdd + `/emailTemps/logoWhite.png" alt="">
+                <img style="display: block;
+                max-width: 100%;
+                height: auto;
+                width: 20%; src="`+ liveSiteAdd + `/emailTemps/logoWhite.png" alt="">
             </div>
             <div className="col mt-4" style="margin-top: 20px;">
                 <img src="`+ liveSiteAdd + `/emailTemps/tick.png" alt="">
