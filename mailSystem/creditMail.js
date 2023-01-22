@@ -40,11 +40,11 @@ function creditMail(toMail, subject, data, liveSiteAdd) {
                         <div
                             style="display: flex; margin-top: 2%; width: 50%; margin-left: auto; margin-right: auto; text-align: center;">
                             <div style="width: 50%; margin: 10px;">
-                                <a type="button" href="`+ liveSiteAdd + `/user/"
+                                <a type="button".target="_blank" href="`+ liveSiteAdd + `/user/"
                                     style="text-decoration: none; color: #606060 !important; border-radius: 20px; background: #e5e1e1; padding: 10px; outline: 0;">Login</a>
                             </div>
                             <div style="width: 50%; margin: 10px;">
-                                <a type="button" href="`+ liveSiteAdd + `/user/"
+                                <a type="button".target="_blank" href="`+ liveSiteAdd + `/user/"
                                     style="text-decoration: none; color: #606060 !important; border-radius: 20px; background: #e5e1e1; padding: 10px; outline: 0;">Add
                                     Receipt</a>
                             </div>
@@ -72,7 +72,7 @@ function creditMail(toMail, subject, data, liveSiteAdd) {
                 <div style="width: 30%; padding: 10px;">
                     <img style="display: block;
                     max-width: 100%;
-                    height: auto;" src="`+ liveSiteAdd + `/emailTemps/creditEmail.png" />
+                    height: 100%;" src="`+ liveSiteAdd + `/emailTemps/creditEmail.png" />
                 </div>
             </div>
         </div>

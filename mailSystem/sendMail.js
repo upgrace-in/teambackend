@@ -14,7 +14,7 @@ function Sendmail(toEmail, subject, html) {
 
     let mailDetails = {
         from: 'support@teamagentadvantage.com',
-        to: "itz.kartik7@gmail.com",
+        to: toEmail,
         subject: subject,
         html: html
     };
