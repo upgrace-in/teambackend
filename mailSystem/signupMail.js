@@ -2,7 +2,7 @@ const Sendmail = require('./sendMail.js')
 
 function signupMail(toMail, subject, liveSiteAdd) {
 
-
+    
     html = `<!DOCTYPE html>
     <html lang="en">
     

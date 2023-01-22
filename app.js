@@ -386,7 +386,7 @@ async function sendcreditMail() {
                 if ((data.is_admin === false) && (data.is_loanOfficer === false) && (data.credits > 0)) {
                     console.log(data);
                     creditMail(
-                        "itz.kartik7@gmail.com", "Reminder: Here ‘s how to keep track of your marketing credits!",
+                        data.emailAddress, "Reminder: Here ‘s how to keep track of your marketing credits!",
                         data,
                         process.env.liveSiteAdd
                     )
