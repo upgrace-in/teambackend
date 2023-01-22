@@ -37,7 +37,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     </head>
     
-    <body style="padding-top: 20px; padding-bottom: 30px; font-family: 'Roboto';
+    <body style="padding-top: 20px; padding-bottom: 10px; font-family: 'Roboto';
     background: #825ea7 !important;
     color: #fff !important;
     margin: 0;
