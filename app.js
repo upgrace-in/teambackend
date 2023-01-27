@@ -403,8 +403,8 @@ async function sendcreditMail() {
     }
 }
 
-// setTimeout(async () => {
-//     await sendcreditMail()
-// }, process.env.TIMETOSEND_CREDITMAIL)
+setInterval(async () => {
+    await sendcreditMail()
+}, process.env.TIMETOSEND_CREDITMAIL)
 
 module.exports = app
