@@ -69,7 +69,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                     <td style="padding: 5px; background: #79559d;
                                 color: #f277e7 !important;
                                 border-top: 1px solid #dee2e6;" 
-                                id="leadEmail">`+ data.inputEmail + `</td>
+                                id="leadEmail"><a style="color: #f277e7 !important;">`+ data.inputEmail + `</a></td>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
@@ -81,7 +81,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
-                                id="credits">`+ data.credits + `</td>
+                                id="credits">$`+ data.credits + `</td>
                 </tr>
             </table>
             <br />
