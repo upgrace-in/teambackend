@@ -15,12 +15,12 @@ function signupMail(toMail, subject, liveSiteAdd) {
     <body style="padding: 20px; font-family: 'Roboto';
     background: #e5e1e1;
     color: rgb(80, 80, 80);">
-        <div className="container mx-auto text-center" style="margin-right: auto; margin-left: auto; text-align: center;">
+        <div className="container mx-auto text-center" style="margin-bottom: 10%; margin-right: auto; margin-left: auto; text-align: center;">
             <div className="card col-md-4 mx-auto text-center mt-4" style="width: 350px; margin-right: auto; margin-left: auto; text-align: center;
-            padding: 5px !important;
-            background: #fff !important;
-            border-radius: 20px;
-            margin-top: 10px;">
+                padding: 5px !important;
+                background: #fff !important;
+                border-radius: 20px;
+                margin-top: 10px; margin-bottom: 5%;">
                 <div className="col mt-4" style="margin-top: 30px;">
                     <img src="`+ liveSiteAdd + `/emailTemps/greentick.png" alt="">
                 </div>
@@ -48,7 +48,7 @@ function signupMail(toMail, subject, liveSiteAdd) {
                     height: auto;
                     width: 20%; src="`+ liveSiteAdd + `/emailTemps/logoBlack.png" alt="">
                 </div>
-                <br/><br/>
+                
             </div>
         </div>
     </body>
