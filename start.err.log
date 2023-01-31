@@ -1,0 +1,26 @@
+events.js:291
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: ENOENT: no such file or directory, open 'images/5723795ee7fe0226e2692f84ab021e86'
+Emitted 'error' event on ReadStream instance at:
+    at internal/fs/streams.js:136:12
+    at FSReqCallback.oncomplete (fs.js:156:23) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'images/5723795ee7fe0226e2692f84ab021e86'
+}
+events.js:291
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: ENOENT: no such file or directory, open 'images/799f91a60c779de4f062950791f9a8c5'
+Emitted 'error' event on ReadStream instance at:
+    at internal/fs/streams.js:136:12
+    at FSReqCallback.oncomplete (fs.js:156:23) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'images/799f91a60c779de4f062950791f9a8c5'
+}

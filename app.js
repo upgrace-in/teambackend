@@ -8,7 +8,7 @@ const crypto = require("crypto");
 require('dotenv').config()
 // Multer
 const multer = require('multer')
-const upload = multer({ dest: 'images' })
+const upload = multer({ dest: __dirname+'/images' })
 
 const mailToAdmin = require('./mailSystem/mailAdmin')
 const mailForgotPassword = require('./mailSystem/mailForgotPassword')
@@ -241,7 +241,7 @@ app.get('/images/:imageName', (req, res) => {
     // authorized to view this image, then
     try {
         const imageName = req.params.imageName
-        const readStream = fs.createReadStream(`images/${imageName}`)
+        const readStream = fs.createReadStream(__dirname+`/images/${imageName}`)
         readStream.pipe(res)
     } catch (e) {
         console.log(e);
