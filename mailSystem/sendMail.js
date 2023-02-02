@@ -20,6 +20,7 @@ function Sendmail(toEmail, subject, html) {
     };
 
     mailTransporter.sendMail(mailDetails, function (err, data) {
+        console.log(err, data);
         if (err) {
             console.log('Error Occurs');
         } else {

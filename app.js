@@ -8,13 +8,14 @@ const crypto = require("crypto");
 require('dotenv').config()
 // Multer
 const multer = require('multer')
-const upload = multer({ dest: __dirname+'/images' })
+const upload = multer({ dest: __dirname + '/images' })
 
 const mailToAdmin = require('./mailSystem/mailAdmin')
 const mailForgotPassword = require('./mailSystem/mailForgotPassword')
 const mailToUser = require('./mailSystem/mailUser')
 const signupMail = require('./mailSystem/signupMail')
 const creditMail = require('./mailSystem/creditMail')
+const receiptMail = require('./mailSystem/receiptMail')
 
 const User = db.collection('Users')
 const Lead = db.collection('Leads')
@@ -162,7 +163,6 @@ app.post('/addLead', async (req, res) => {
                 await Lead.doc(data.uid).set({ ...data, transaction: "OPEN" })
             });
 
-        // Changed
         // To the Admin
         mailToAdmin(process.env.adminMail, "Someone Added A Lead", data, process.env.liveSiteAdd)
 
@@ -221,14 +221,28 @@ app.get('/checkUserExists', async (req, res) => {
 app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
     try {
         const data = req.body
-        const imagePath = req.file.path
+        const filename = req.file.filename
         // Save this data to a database properly
         await getUsers(data['emailAddress'])
             .then(async (val) => {
                 // No need to update the credits here
                 // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) - parseFloat(data.inputRecAmt) })
-                await Receipt.doc(data.uid).set({ ...data, imageFile: imagePath })
+                await Receipt.doc(data.uid).set({ ...data, imageFile: filename });
+                // send email
+                // "support@teamagentadvantage.com"
+                receiptMail("thedesiretree47@gmail.com", "A Receipt Has Been Uploaded", { uid: data.uid, emailAddress: data.emailAddress })
             });
+        res.send({ msg: true })
+    } catch (e) {
+        console.log(e)
+        res.send({ msg: false })
+    }
+})
+
+app.post('/deleteReceipt', async (req, res) => {
+    try {
+        const data = req.body
+        await Receipt.doc(data.uid).delete()
         res.send({ msg: true })
     } catch (e) {
         console.log(e)
@@ -241,7 +255,7 @@ app.get('/images/:imageName', (req, res) => {
     // authorized to view this image, then
     try {
         const imageName = req.params.imageName
-        const readStream = fs.createReadStream(__dirname+`/images/${imageName}`)
+        const readStream = fs.createReadStream(__dirname + `/images/${imageName}`)
         readStream.pipe(res)
     } catch (e) {
         console.log(e);
@@ -342,17 +356,18 @@ app.post('/updateCredits', async (req, res) => {
                     credits = parseFloat(val.data.credits) - parseFloat(data.inputRecAmt)
                     await User.doc(data['emailAddress']).update({ credits: credits })
                 } else
-                    throw new Error;
+                    throw "Insufficient fund to deduct";
             });
         // update the credit of receipt
         await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt })
         // updating the logs
         // await Logs.doc(data.emailAddress).set({ msg: `Your credit is updated to: ` + credits + ` due to your recent uploaded receipt (` + data.uid + `).` })
         res.send({ msg: true })
+        // 12838
     }
     catch (e) {
         console.log(e)
-        res.send({ msg: false })
+        res.send({ msg: false, response: e })
     }
 })
 
@@ -387,7 +402,7 @@ async function sendcreditMail() {
                 data = doc.data()
                 // send to creditMail
                 if ((data.is_admin === false) && (data.is_loanOfficer === false) && (data.credits > 0)) {
-                    console.log(data);
+                    console.log(data.emailAddress);
                     creditMail(
                         data.emailAddress, "Reminder: Here ‘s how to keep track of your marketing credits!",
                         data,
