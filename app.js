@@ -467,8 +467,9 @@ app.post('/updatePassword', async (req, res) => {
     }
 })
 
-// setInterval(async () => {
-//     await sendcreditMail()
-// }, process.env.TIMETOSEND_CREDITMAIL)
+if (process.env.LIVE)
+    setInterval(async () => {
+        await sendcreditMail()
+    }, process.env.TIMETOSEND_CREDITMAIL)
 
 module.exports = app
