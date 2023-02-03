@@ -457,7 +457,6 @@ app.get('/checkOTP', async (req, res) => {
     }
 })
 
-
 // send in query the newpassword and emailaddress
 app.post('/updatePassword', async (req, res) => {
     try {
@@ -467,7 +466,6 @@ app.post('/updatePassword', async (req, res) => {
         res.send({ msg: false, response: e })
     }
 })
-
 
 // setInterval(async () => {
 //     await sendcreditMail()
