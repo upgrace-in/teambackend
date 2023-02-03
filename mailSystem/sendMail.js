@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config()
 
 let userEmail = 'support@teamagentadvantage.com'
-let pass = "imsd enrc roqz szgt"
+let pass = process.env.EMAILPWORD
 
 function Sendmail(toEmail, subject, html) {
     let mailTransporter = nodemailer.createTransport({

@@ -5,6 +5,7 @@ const app = express()
 const fs = require('fs')
 const crypto = require("crypto");
 
+
 require('dotenv').config()
 // Multer
 const multer = require('multer')
@@ -16,11 +17,12 @@ const mailToUser = require('./mailSystem/mailUser')
 const signupMail = require('./mailSystem/signupMail')
 const creditMail = require('./mailSystem/creditMail')
 const receiptMail = require('./mailSystem/receiptMail')
+const otpMail = require('./mailSystem/otpMail')
 
 const User = db.collection('Users')
 const Lead = db.collection('Leads')
 const Receipt = db.collection('Receipts')
-const Logs = db.collection('Logs')
+const OTPs = db.collection('OTPs')
 
 app.listen(process.env.PORT, () => console.log("Running"))
 
@@ -159,7 +161,7 @@ app.post('/addLead', async (req, res) => {
         // Save lead
         await getUsers(data['emailAddress'])
             .then(async (val) => {
-                User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) + parseFloat(data.credits) })
+                // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) + parseFloat(data.credits) })
                 await Lead.doc(data.uid).set({ ...data, transaction: "OPEN" })
             });
 
@@ -278,22 +280,6 @@ app.get('/fetchReceipts', async (req, res) => {
     }
 })
 
-// app.get('/fetchLogs', async (req, res) => {
-//     const data = req.query
-//     try {
-//         const snapshot = await Receipt.where('emailAddress', '==', data['emailAddress']).get();
-//         if (snapshot.empty) {
-//             res.send({ msg: false })
-//         } else {
-//             res.send({ msg: true, data: snapshot.docs.map(doc => doc.data()) })
-//         }
-//     }
-//     catch (e) {
-//         console.log(e)
-//         res.send({ msg: false })
-//     }
-// })
-
 // Admin Console or Loan Officer
 // Fetch all leads
 app.get('/fetchAllLeads', async (req, res) => {
@@ -333,13 +319,41 @@ app.post('/deleteLead', async (req, res) => {
     try {
         // Deleting the lead
         await Lead.doc(data['uid']).delete();
-        // Update the log
-        // await Logs.doc(data.emailAddress).set({ msg: `Your lead: ` + data.uid + ` name: ` + data.leadMailAddress + ` has been deleted by us.` })
         res.send({ msg: true })
     }
     catch (e) {
         console.log(e)
         res.send({ msg: false })
+    }
+})
+
+// Close any lead
+app.post('/closeLead', async (req, res) => {
+    const data = req.body
+    try {
+        const snapshot = await Lead.where('uid', '==', data.uid).get();
+        if (snapshot.empty) {
+            res.send({ msg: false })
+        } else {
+            snapshot.docs.map(async (doc) => {
+                d = doc.data()
+                // close the lead
+                await Lead.doc(data.uid).update({ transaction: "CLOSED" })
+                // find the credits acc to loanAMT
+                let credits = (parseFloat(d.loanAmt) * process.env.CALCULATOR) / 100
+                // add credits to the account
+                await getUsers(data['emailAddress'])
+                    .then(async (val) => {
+                        let finalcredits = parseFloat(val.data.credits) + parseFloat(credits)
+                        await User.doc(data['emailAddress']).update({ credits: finalcredits })
+                    });
+                res.send({ msg: true })
+            })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.send({ msg: false, response: e })
     }
 })
 
@@ -360,8 +374,6 @@ app.post('/updateCredits', async (req, res) => {
             });
         // update the credit of receipt
         await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt })
-        // updating the logs
-        // await Logs.doc(data.emailAddress).set({ msg: `Your credit is updated to: ` + credits + ` due to your recent uploaded receipt (` + data.uid + `).` })
         res.send({ msg: true })
         // 12838
     }
@@ -418,8 +430,47 @@ async function sendcreditMail() {
     }
 }
 
-setInterval(async () => {
-    await sendcreditMail()
-}, process.env.TIMETOSEND_CREDITMAIL)
+// send in query the emailaddress
+app.get('/sendOTP', async (req, res) => {
+    try {
+        let otp = Math.floor(100000 + Math.random() * 900000)
+        await OTPs.doc(req.query.emailAddress).set({ emailAddress: req.query.emailAddress, otp: otp });
+        // Send as email
+        await otpMail(req.query.emailAddress, 'Forgot Password', otp)
+        res.send({ msg: true })
+    } catch (e) {
+        console.log(e);
+        res.send({ msg: false })
+    }
+})
+
+// send in query the otp and emailaddress
+app.get('/checkOTP', async (req, res) => {
+    const snapshot = await OTPs.where('emailAddress', '==', req.query.emailAddress).get();
+    if (snapshot.empty) {
+        res.send({ msg: false })
+    } else {
+        if (snapshot.docs[0].data()['otp'] === parseInt(req.query.otp)) {
+            res.send({ msg: true })
+        } else
+            res.send({ msg: false })
+    }
+})
+
+
+// send in query the newpassword and emailaddress
+app.post('/updatePassword', async (req, res) => {
+    try {
+        await User.doc(data['emailAddress']).update({ password: req.data.newpassword })
+        res.send({ msg: true })
+    } catch (e) {
+        res.send({ msg: false, response: e })
+    }
+})
+
+
+// setInterval(async () => {
+//     await sendcreditMail()
+// }, process.env.TIMETOSEND_CREDITMAIL)
 
 module.exports = app
