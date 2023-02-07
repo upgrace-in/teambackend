@@ -23,6 +23,7 @@ const User = db.collection('Users')
 const Lead = db.collection('Leads')
 const Receipt = db.collection('Receipts')
 const OTPs = db.collection('OTPs')
+const APIs = db.collection('APIs')
 
 app.listen(process.env.PORT, () => console.log("Running"))
 
@@ -112,44 +113,6 @@ app.post('/loginuser', async (req, res) => {
                 loginSession(req, res, null, 'Password unmatched !!!')
         } else {
             loginSession(req, res, null, "User doesn't exists !!!")
-        }
-    })
-})
-
-// Match the code & update the database with new password
-app.post('/update_password', async (req, res) => {
-    const data = req.body
-    // Fetching the user from db
-    await getUsers(data['emailAddress']).then(async (val) => {
-        if (val['response'] === true) {
-            // Match the code
-            if (data['code'] === val.code) {
-                await User.doc(data['emailAddress']).update({ password: data.updatedpassword })
-                loginSession(req, res, val['data'], 'Logging in...')
-            } else
-                loginSession(req, res, null, 'Something went wrong !!!')
-        } else {
-            loginSession(req, res, null, "User doesn't exists !!!")
-        }
-    })
-})
-
-// Send code to email & to the db
-app.post('/sendCode', async (req, res) => {
-    const data = req.body
-    // Fetching the user from db
-    await getUsers(data['emailAddress']).then(async (val) => {
-        if (val['response'] === true) {
-            // generate a 6 digit randCode
-            let randCode = Math.floor(100000 + Math.random() * 900000)
-            // Updating the code to the db
-            await User.doc(data['emailAddress']).set({ code: randCode })
-            // send the code to the emailAddresss
-            mailForgotPassword(data['emailAddress'], "Here is your password reset code !!!", data)
-
-            res.send({ msg: "Password Sent !!!" })
-        } else {
-            res.send({ msg: "Something went wrong!!!" })
         }
     })
 })
@@ -414,7 +377,6 @@ async function sendcreditMail() {
                 data = doc.data()
                 // send to creditMail
                 if ((data.is_admin === false) && (data.is_loanOfficer === false) && (data.credits > 0)) {
-                    console.log(data.emailAddress);
                     creditMail(
                         data.emailAddress, "Reminder: Here ‘s how to keep track of your marketing credits!",
                         data,
@@ -433,10 +395,14 @@ async function sendcreditMail() {
 // send in query the emailaddress
 app.get('/sendOTP', async (req, res) => {
     try {
+        const users = await getUsers(req.query.emailAddress)
+        console.log(users);
         let otp = Math.floor(100000 + Math.random() * 900000)
+        console.log(otp);
         await OTPs.doc(req.query.emailAddress).set({ emailAddress: req.query.emailAddress, otp: otp });
-        // Send as email
-        await otpMail(req.query.emailAddress, 'Forgot Password', otp)
+        // Send as email 
+        // changed
+        // await otpMail(req.query.emailAddress, 'Forgot Password', otp)
         res.send({ msg: true })
     } catch (e) {
         console.log(e);
@@ -460,14 +426,51 @@ app.get('/checkOTP', async (req, res) => {
 // send in query the newpassword and emailaddress
 app.post('/updatePassword', async (req, res) => {
     try {
-        await User.doc(data['emailAddress']).update({ password: req.data.newpassword })
+        let data = req.body
+        await User.doc(data['emailAddress']).update({ password: data.newpassword })
         res.send({ msg: true })
     } catch (e) {
         res.send({ msg: false, response: e })
     }
 })
 
-if (process.env.LIVE)
+// api for updating close (uid, apikey)
+// http://api.teamagentadvantage.com/close_lead_externally/ body: {apiKEY, leaduid}
+app.post('/close_lead_externally', async (req, res) => {
+    const data = req.body
+    try {
+        const apiKEY = await APIs.where('apiKEY', '==', data.apiKEY).get();
+        if (apiKEY) {
+            const snapshot = await Lead.where('uid', '==', data.leaduid).get();
+            if (snapshot.empty) {
+                res.send({ msg: false })
+            } else {
+                snapshot.docs.map(async (doc) => {
+                    d = doc.data()
+                    // close the lead
+                    await Lead.doc(data.uid).update({ transaction: "CLOSED" })
+                    // find the credits acc to loanAMT
+                    let credits = (parseFloat(d.loanAmt) * process.env.CALCULATOR) / 100
+                    // add credits to the account
+                    await getUsers(d.emailAddress)
+                        .then(async (val) => {
+                            let finalcredits = parseFloat(val.data.credits) + parseFloat(credits)
+                            await User.doc(d.emailAddress).update({ credits: finalcredits })
+                        });
+                    res.send({ msg: true })
+                })
+            }
+        }else{
+            throw "Invalid APIKEY !!!"
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.send({ msg: false, response: e })
+    }
+})
+
+if (process.env.LIVE === 1)
     setInterval(async () => {
         await sendcreditMail()
     }, process.env.TIMETOSEND_CREDITMAIL)
