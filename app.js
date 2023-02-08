@@ -396,14 +396,14 @@ async function sendcreditMail() {
 app.get('/sendOTP', async (req, res) => {
     try {
         const users = await getUsers(req.query.emailAddress)
-        console.log(users);
-        let otp = Math.floor(100000 + Math.random() * 900000)
-        console.log(otp);
-        await OTPs.doc(req.query.emailAddress).set({ emailAddress: req.query.emailAddress, otp: otp });
-        // Send as email 
-        // changed
-        // await otpMail(req.query.emailAddress, 'Forgot Password', otp)
-        res.send({ msg: true })
+        if (users.response) {
+            let otp = Math.floor(100000 + Math.random() * 900000)
+            await OTPs.doc(req.query.emailAddress).set({ emailAddress: req.query.emailAddress, otp: otp });
+            await otpMail(req.query.emailAddress, 'Forgot Password', otp)
+            res.send({ msg: true })
+        } else {
+            throw 'Invalid User !!!'
+        }
     } catch (e) {
         console.log(e);
         res.send({ msg: false })
@@ -460,7 +460,7 @@ app.post('/close_lead_externally', async (req, res) => {
                     res.send({ msg: true })
                 })
             }
-        }else{
+        } else {
             throw "Invalid APIKEY !!!"
         }
     }
