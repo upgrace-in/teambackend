@@ -194,8 +194,7 @@ app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
                 // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) - parseFloat(data.inputRecAmt) })
                 await Receipt.doc(data.uid).set({ ...data, imageFile: filename });
                 // send email
-                // "support@teamagentadvantage.com"
-                receiptMail("thedesiretree47@gmail.com", "A Receipt Has Been Uploaded", { uid: data.uid, emailAddress: data.emailAddress })
+                receiptMail(process.env.uploadedreceipt, "A Receipt Has Been Uploaded", { uid: data.uid, emailAddress: data.emailAddress })
             });
         res.send({ msg: true })
     } catch (e) {
