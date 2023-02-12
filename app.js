@@ -187,15 +187,9 @@ app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
     try {
         const data = req.body
         const filename = req.file.filename
-        // Save this data to a database properly
-        await getUsers(data['emailAddress'])
-            .then(async (val) => {
-                // No need to update the credits here
-                // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) - parseFloat(data.inputRecAmt) })
-                await Receipt.doc(data.uid).set({ ...data, imageFile: filename });
-                // send email
-                receiptMail(process.env.uploadedreceipt, "A Receipt Has Been Uploaded", { uid: data.uid, emailAddress: data.emailAddress })
-            });
+        await Receipt.doc(data.uid).set({ ...data, imageFile: filename, used: false }, { merge: true });
+        // send email
+        receiptMail(process.env.uploadedreceipt, "A Receipt Has Been Uploaded", { uid: data.uid, emailAddress: data.emailAddress })
         res.send({ msg: true })
     } catch (e) {
         console.log(e)
@@ -203,16 +197,32 @@ app.post('/uploadReceipt', upload.single("img"), async (req, res) => {
     }
 })
 
+
 app.post('/deleteReceipt', async (req, res) => {
     try {
         const data = req.body
-        await Receipt.doc(data.uid).delete()
+        // Fetch the receipt
+        const receipt = await Receipt.where('uid', '==', data.uid).get();
+
+        // taking out the imageFile
+        let imageFile = receipt.docs[0].data().imageFile
+
+        //console.log(__dirname + '/images/' + imageFile);
+
+        fs.unlink(__dirname + '/images/' + imageFile, async (err) => {
+            if (err) throw err
+            console.log('deleted');
+            // deltet he receipt
+            await Receipt.doc(data.uid).delete()
+        });
+
         res.send({ msg: true })
     } catch (e) {
         console.log(e)
         res.send({ msg: false })
     }
 })
+
 
 app.get('/images/:imageName', (req, res) => {
     // do a bunch of if statements to make sure the user is 
@@ -242,9 +252,7 @@ app.get('/fetchReceipts', async (req, res) => {
     }
 })
 
-// Admin Console or Loan Officer
-// Fetch all leads
-app.get('/fetchAllLeads', async (req, res) => {
+async function fetchAllLeads(req, res) {
     try {
         const snapshot = await Lead.get();
         if (snapshot.empty) {
@@ -257,6 +265,12 @@ app.get('/fetchAllLeads', async (req, res) => {
         console.log(e)
         res.send({ msg: false })
     }
+}
+
+// Admin Console or Loan Officer
+// Fetch all leads
+app.get('/fetchAllLeads', async (req, res) => {
+    await fetchAllLeads(req, res)
 })
 
 // Fetch all receipt
@@ -335,9 +349,38 @@ app.post('/updateCredits', async (req, res) => {
                     throw "Insufficient fund to deduct";
             });
         // update the credit of receipt
-        await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt })
+        await Receipt.doc(data.uid).update({ inputRecAmt: data.inputRecAmt, used: true })
         res.send({ msg: true })
         // 12838
+    }
+    catch (e) {
+        console.log(e)
+        res.send({ msg: false, response: e })
+    }
+})
+
+
+// Revert the credit of the user
+app.post('/revertReceipt', async (req, res) => {
+    const data = req.body
+    try {
+        // fetch the amt off receipt
+        const receipt = await Receipt.where('uid', '==', data.uid).get();
+
+        let inputRecAmt = receipt.docs[0].data().inputRecAmt
+
+        // add  it back to users credits
+        await getUsers(data['emailAddress'])
+            .then(async (val) => {
+                // console.log(val);
+                // Updating the credits
+                let credits = parseFloat(val.data.credits) + parseFloat(inputRecAmt)
+                await User.doc(data['emailAddress']).update({ credits: credits })
+            });
+
+        // change the status of receipt to fasle
+        await Receipt.doc(data.uid).update({ used: false })
+        res.send({ msg: true })
     }
     catch (e) {
         console.log(e)
@@ -437,6 +480,7 @@ app.post('/updatePassword', async (req, res) => {
 // http://api.teamagentadvantage.com/close_lead_externally/ body: {apiKEY, leaduid}
 app.post('/close_lead_externally', async (req, res) => {
     const data = req.body
+    console.log(data);
     try {
         const apiKEY = await APIs.where('apiKEY', '==', data.apiKEY).get();
         if (apiKEY) {
@@ -447,7 +491,7 @@ app.post('/close_lead_externally', async (req, res) => {
                 snapshot.docs.map(async (doc) => {
                     d = doc.data()
                     // close the lead
-                    await Lead.doc(data.uid).update({ transaction: "CLOSED" })
+                    await Lead.doc(d.uid).update({ transaction: "CLOSED" })
                     // find the credits acc to loanAMT
                     let credits = (parseFloat(d.loanAmt) * process.env.CALCULATOR) / 100
                     // add credits to the account
@@ -459,6 +503,22 @@ app.post('/close_lead_externally', async (req, res) => {
                     res.send({ msg: true })
                 })
             }
+        } else {
+            throw "Invalid APIKEY !!!"
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.send({ msg: false, response: e })
+    }
+})
+
+app.get('/get_leads_externally', async (req, res) => {
+    const data = req.query
+    try {
+        const apiKEY = await APIs.where('apiKEY', '==', data.apiKEY).get();
+        if (apiKEY) {
+            await fetchAllLeads(req, res)
         } else {
             throw "Invalid APIKEY !!!"
         }
