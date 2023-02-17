@@ -13,21 +13,29 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     var dt = dateTime.create();
     var realTimeDateTime = dt.format('Y-m-d H:M:S');
 
-    // if (data.clientReady !== undefined) {
-    //     clientActivelyMsg = `<p>
-    //         <span style="color: #fff">Best date and time to call is</span>
-    //         <br />
-    //         <span className="fw-7" style="font-weight: 700;
-    //         font-size: 1.5rem;">On `+ data.clientReady + `</span>
-    //     </p>`
-    // } else {
-    //     clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
-    //     font-size: 1.5rem; color: #fff;">
-    //         <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call her first
-    //         <br/>
-    //         <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
-    //     </p>`
-    // }
+    if (data.clientReady !== undefined) {
+        clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
+        font-size: 1.5rem; color: #fff;">
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client
+            <br/>
+            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+        </p>`
+    } else if (data.talkFirst !== undefined) {
+        clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
+        font-size: 1.5rem; color: #fff;">
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first
+            <br/>
+            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+        </p>`
+    } else {
+        // connectwithLender
+        clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
+        font-size: 1.5rem; color: #fff;">
+            <span id="userFname">`+ capitalize(data.name) + `</span>, says you already talked to the lead
+            <br/>
+            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+        </p>`
+    }
     html = `<!DOCTYPE html>
     <html lang="en">
     
@@ -84,6 +92,9 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                                 id="credits">$`+ data.credits + `</td>
                 </tr>
             </table>
+            <br />
+            `+ clientActivelyMsg + `
+            <br />
             <a href="`+ liveSiteAdd + `/user" target="_blank" 
             className="btn btn-light" 
             style="border-radius: 10px;
