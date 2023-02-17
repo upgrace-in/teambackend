@@ -233,6 +233,7 @@ app.get('/images/:imageName', (req, res) => {
         readStream.pipe(res)
     } catch (e) {
         console.log(e);
+        res.status(404).send({msg: true});
     }
 })
 
