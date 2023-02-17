@@ -4,7 +4,7 @@ const { db } = require('./config')
 const app = express()
 const fs = require('fs')
 const crypto = require("crypto");
-
+const path = require('path');
 
 require('dotenv').config()
 // Multer
@@ -207,14 +207,16 @@ app.post('/deleteReceipt', async (req, res) => {
         // taking out the imageFile
         let imageFile = receipt.docs[0].data().imageFile
 
-        //console.log(__dirname + '/images/' + imageFile);
-
-        fs.unlink(__dirname + '/images/' + imageFile, async (err) => {
-            if (err) throw err
-            console.log('deleted');
-            // deltet he receipt
+        if (fs.existsSync(__dirname + '/images/' + imageFile)) {
+            fs.unlink(__dirname + '/images/' + imageFile, async (err) => {
+                if (err) throw err
+                console.log('deleted');
+                // deltet he receipt
+                await Receipt.doc(data.uid).delete()
+            });
+        } else {
             await Receipt.doc(data.uid).delete()
-        });
+        }
 
         res.send({ msg: true })
     } catch (e) {
@@ -229,11 +231,17 @@ app.get('/images/:imageName', (req, res) => {
     // authorized to view this image, then
     try {
         const imageName = req.params.imageName
-        const readStream = fs.createReadStream(__dirname + `/images/${imageName}`)
-        readStream.pipe(res)
+        console.log(req.params.imageName);
+        let imagePATH = __dirname + `/images/${imageName}`
+        if (fs.existsSync(imagePATH)) {
+            const readStream = fs.createReadStream(imagePATH)
+            readStream.pipe(res)
+        } else {
+            throw "Image not found"
+        }
     } catch (e) {
         console.log(e);
-        res.status(404).send({msg: true});
+        res.status(404).send({ msg: true });
     }
 })
 
