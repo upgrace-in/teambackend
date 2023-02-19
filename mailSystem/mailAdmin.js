@@ -9,6 +9,14 @@ function formatPhone(phone) {
     return "(" + phone.substring(0, 3) + ")" + " " + phone.substring(3, 6) + "-" + phone.substring(6, 11)
 }
 
+function pstFORM(date) {
+    var myDate = new Date(date)
+    var pstDate = myDate.toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles"
+    })
+    return pstDate
+}
+
 function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     var dt = dateTime.create();
     var realTimeDateTime = dt.format('Y-m-d H:M:S');
@@ -16,14 +24,14 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     if (data.clientReady !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client On `+ pstFORM(data.clientReady) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
     } else if (data.talkFirst !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first On `+ pstFORM(data.talkFirst) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
