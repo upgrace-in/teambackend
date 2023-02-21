@@ -24,14 +24,14 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     if (data.clientReady !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client On `+ pstFORM(data.clientReady) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client on `+ pstFORM(data.clientReady) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
     } else if (data.talkFirst !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first On `+ pstFORM(data.talkFirst) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first on `+ pstFORM(data.talkFirst) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
@@ -72,7 +72,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                 <img src="`+ liveSiteAdd + `/emailTemps/tick.png" alt="">
             </div>
             <p style="color: #fff">
-                On <span id="dateTime" style="color: #fff;">`+ realTimeDateTime + `</span>
+                On <span id="dateTime" style="color: #fff;">`+ pstFORM(realTimeDateTime) + `</span>
                 <br />
                 <span id="userName" style="color: #fff;">`+ capitalize(data.name) + ` </span>registered a new lead.
             </p>
@@ -93,11 +93,11 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
-                                id="loanAmount">$`+ data.loanAmt + `</td>
+                                id="loanAmount">`+ data.loanAmt + `</td>
                     <td style="padding: 5px; background: #79559d;
                                 color: #fff;
                                 border-top: 1px solid #dee2e6;" 
-                                id="credits">$`+ data.credits + `</td>
+                                id="credits">`+ data.credits + `</td>
                 </tr>
             </table>
             <br />
@@ -110,7 +110,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
             background: #fff9;
             text-decoration: none;
             font-weight: 600;
-            color: #2a084d !important;">View lead</a>
+            color: #2a084d !important;">View lead for notes</a>
         </div>
     </body>
     

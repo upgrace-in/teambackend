@@ -35,7 +35,7 @@ function creditMail(toMail, subject, data, liveSiteAdd) {
                         <br /><br />
                         <div
                             style="background: #5f1cb7; width: 50%; border-radius: 20px; margin-left: auto; margin-right: auto; text-align: center;">
-                            <h1 style="margin:0; color: white; font-size: 4rem;">$`+ data.credits + `</h1>
+                            <h1 style="margin:0; color: white; font-size: 4rem;">`+ data.credits + `</h1>
                         </div>
                         <div
                             style="display: flex; margin-top: 2%; width: 50%; margin-left: auto; margin-right: auto; text-align: center;">
