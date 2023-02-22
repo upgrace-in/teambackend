@@ -11,27 +11,31 @@ function formatPhone(phone) {
 
 function pstFORM(date) {
     var myDate = new Date(date)
+
     var pstDate = myDate.toLocaleString("en-US", {
-        timeZone: "America/Los_Angeles"
-    })
+        timeZone: "America/Los_Angeles",
+        hourCycle: 'h12'
+    }).replace(",","").replace(/:.. /," ");
+
     return pstDate
 }
 
 function mailToAdmin(toMail, subject, data, liveSiteAdd) {
-    var dt = dateTime.create();
-    var realTimeDateTime = dt.format('Y-m-d H:M:S');
+
+    // var dt = dateTime.create();
+    // var realTimeDateTime = dt.format('Y-m-d H:M');
 
     if (data.clientReady !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client on `+ pstFORM(data.clientReady) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client on ` + pstFORM(data.clientReady) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
     } else if (data.talkFirst !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first on `+ pstFORM(data.talkFirst) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first on ` + pstFORM(data.talkFirst) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
@@ -59,10 +63,10 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     margin: 0;
     font-size: 1rem;
     font-weight: 400;
-    line-height: 1.5;">
+    line-height: 1.5; border-radius: 20px;">
         <div className="container mx-auto text-center" style="width: 80%; text-align: center; margin-right: auto;
         margin-left: auto;">
-            <div className="col mt-4" style="margin-top: 20px;">
+            <div className="col mt-4">
                 <img style="display: block;
                 max-width: 100%;
                 height: auto;
@@ -72,7 +76,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
                 <img src="`+ liveSiteAdd + `/emailTemps/tick.png" alt="">
             </div>
             <p style="color: #fff">
-                On <span id="dateTime" style="color: #fff;">`+ pstFORM(realTimeDateTime) + `</span>
+                On <span id="dateTime" style="color: #fff;">`+ pstFORM(data.createdon) + `</span>
                 <br />
                 <span id="userName" style="color: #fff;">`+ capitalize(data.name) + ` </span>registered a new lead.
             </p>
@@ -111,6 +115,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
             text-decoration: none;
             font-weight: 600;
             color: #2a084d !important;">View lead for notes</a>
+            <br/><br/>
         </div>
     </body>
     

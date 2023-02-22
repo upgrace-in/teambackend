@@ -6,6 +6,8 @@ const fs = require('fs')
 const crypto = require("crypto");
 const path = require('path');
 
+const axios = require("axios")
+
 require('dotenv').config()
 // Multer
 const multer = require('multer')
@@ -39,8 +41,6 @@ app.use(cookieParser());
 
 app.use(express.json())
 app.use(cors())
-
-
 
 async function loginSession(req, res, data, msg) {
     try {
@@ -117,6 +117,56 @@ app.post('/loginuser', async (req, res) => {
     })
 })
 
+async function postLead(data) {
+    try {
+
+        let leadData = {
+            "firstname": data.fname,
+            "lastname": data.lname,
+            "email": data.inputEmail,
+            "phone": data.inputPhone,
+            "borcity": data.offerAcceptedStatus.inputAddress,
+            "borstate": "null",
+            "borzip": "null",
+            "firsttimehomebuyer": "null",
+            "borempinfoEmpType": "null",
+            "borbaseEmpincome": "null",
+            "referralsource": "null",
+            "loan_estAppraisalVal": "null",
+            "workwithrealtor": "null",
+            "leadveteran": "null",
+            "leadbankruptcy": "null",
+            "londischargedate": "null",
+            "creditscore": data.credits,
+            "LoanAmount": data.loanAmt,
+            "downpmtamount2": "null",
+            "purpose": "null",
+            "lonloantype2": "null",
+            "prCity": "null",
+            "prZipCode": "null",
+            "borpurchasePrice": "null",
+            "prState": "null",
+            "qkapppropertyType": "null",
+            "propropertyUse": "null",
+            "refId": data.uid,
+            "depursLi": data.offerAcceptedStatus.officerUserID,
+            "comments": data.offerAcceptedStatus.inputNotes
+        }
+
+        console.log(leadData);
+
+        await axios
+            .post('https://secure.setshape.com/postlead/10699/11210', leadData)
+            .then((val) => {
+                console.log(val.data);
+            })
+            .catch((error) => console.log(error.message));
+    } catch (e) {
+        console.log(e);
+        return false
+    }
+}
+
 // Leads
 app.post('/addLead', async (req, res) => {
     const data = req.body
@@ -126,6 +176,9 @@ app.post('/addLead', async (req, res) => {
             .then(async (val) => {
                 // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) + parseFloat(data.credits) })
                 await Lead.doc(data.uid).set({ ...data, transaction: "OPEN" })
+
+                // Posting to the CRM
+                await postLead(data)
             });
 
         // To the Admin
@@ -542,5 +595,11 @@ if (process.env.LIVE === 1)
     setInterval(async () => {
         await sendcreditMail()
     }, process.env.TIMETOSEND_CREDITMAIL)
+
+// setTimeout(async () => {
+//     const data = await Lead.where('uid', '==', "rt4rii5ddwl").get()
+//     // console.log(data.docs[0].data()); //5:45 PM
+//     mailToAdmin("itz.kartik7@gmail.com", "Someone Added A Lead", data.docs[0].data(), process.env.liveSiteAdd)
+// }, 1000)
 
 module.exports = app
