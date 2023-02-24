@@ -10,14 +10,23 @@ function formatPhone(phone) {
 }
 
 function pstFORM(date) {
+
     var myDate = new Date(date)
 
     var pstDate = myDate.toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
-        hourCycle: 'h12'
-    }).replace(",","").replace(/:.. /," ");
+        hourCycle: 'h12',
+        dateStyle: 'medium'
+    })
 
-    return pstDate
+    var pstTime = myDate.toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+        hourCycle: 'h12',
+        timeStyle: 'short'
+    })
+
+    return pstDate + ' ' + pstTime
+
 }
 
 function mailToAdmin(toMail, subject, data, liveSiteAdd) {

@@ -153,7 +153,7 @@ async function postLead(data) {
             "comments": data.offerAcceptedStatus.inputNotes
         }
 
-        console.log(leadData);
+        // console.log(leadData);
 
         await axios
             .post('https://secure.setshape.com/postlead/10699/11210', leadData)
@@ -596,10 +596,10 @@ if (process.env.LIVE === 1)
         await sendcreditMail()
     }, process.env.TIMETOSEND_CREDITMAIL)
 
-// setTimeout(async () => {
-//     const data = await Lead.where('uid', '==', "rt4rii5ddwl").get()
-//     // console.log(data.docs[0].data()); //5:45 PM
-//     mailToAdmin("itz.kartik7@gmail.com", "Someone Added A Lead", data.docs[0].data(), process.env.liveSiteAdd)
-// }, 1000)
+setTimeout(async () => {
+    const data = await Lead.where('uid', '==', "rtql4enx3x").get()
+    // console.log(data.docs[0].data()); //5:45 PM
+    mailToAdmin("itz.kartik7@gmail.com", "Someone Added A Lead", data.docs[0].data(), process.env.liveSiteAdd)
+}, 1000)
 
 module.exports = app
