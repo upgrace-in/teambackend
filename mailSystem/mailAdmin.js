@@ -37,14 +37,14 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
     if (data.clientReady !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client on ` + pstFORM(data.clientReady) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client<br/>on ` + pstFORM(data.clientReady) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
     } else if (data.talkFirst !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
-            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first on ` + pstFORM(data.talkFirst) + `
+            <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first<br/>on ` + pstFORM(data.talkFirst) + `
             <br/>
             <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.phoneNumber) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
         </p>`
