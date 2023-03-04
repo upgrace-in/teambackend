@@ -156,7 +156,7 @@ async function postLead(data) {
         // console.log(leadData);
 
         await axios
-            .post('https://secure.setshape.com/postlead/10699/11210', leadData)
+            .post('https://secure.setshape.com/prospects/36175/edit', leadData)
             .then((val) => {
                 console.log(val.data);
             })
@@ -174,8 +174,7 @@ app.post('/addLead', async (req, res) => {
         // Save lead
         await getUsers(data['emailAddress'])
             .then(async (val) => {
-                // User.doc(data['emailAddress']).update({ credits: parseFloat(val.data.credits) + parseFloat(data.credits) })
-                await Lead.doc(data.uid).set({ ...data, transaction: "OPEN" })
+                await Lead.doc(data.uid).set(data)
 
                 // Posting to the CRM
                 await postLead(data)
@@ -395,6 +394,24 @@ app.post('/closeLead', async (req, res) => {
     }
 })
 
+app.post('/updateLead', async (req, res) => {
+    const data = req.body
+    try {
+        const snapshot = await Lead.where('uid', '==', data.uid).get();
+        if (snapshot.empty) {
+            res.send({ msg: false })
+        } else {
+            console.log(data);
+            await Lead.doc(data.uid).update(data)
+            res.send({ msg: true })
+        }
+    }
+    catch (e) {
+        console.log(e)
+        res.send({ msg: false, response: e })
+    }
+})
+
 // Update the credit of the user
 app.post('/updateCredits', async (req, res) => {
     const data = req.body
@@ -596,10 +613,10 @@ if (process.env.LIVE === 1)
         await sendcreditMail()
     }, process.env.TIMETOSEND_CREDITMAIL)
 
-setTimeout(async () => {
-    const data = await Lead.where('uid', '==', "rtql4enx3x").get()
-    // console.log(data.docs[0].data()); //5:45 PM
-    mailToAdmin("itz.kartik7@gmail.com", "Someone Added A Lead", data.docs[0].data(), process.env.liveSiteAdd)
-}, 1000)
+// setTimeout(async () => {
+//     const data = await Lead.where('uid', '==', "rtql4enx3x").get()
+//     // console.log(data.docs[0].data()); //5:45 PM
+//     mailToAdmin("itz.kartik7@gmail.com", "Someone Added A Lead", data.docs[0].data(), process.env.liveSiteAdd)
+// }, 1000)
 
 module.exports = app
