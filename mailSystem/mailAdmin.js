@@ -39,14 +39,14 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
         font-size: 1.5rem; color: #fff;">
             <span id="userFname">`+ capitalize(data.name) + `</span>, would like you to call the client<br/>on ` + pstFORM(data.clientReady) + `
             <br/>
-            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.inputPhone) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+            <a style="color: #f277e7 !important;" href="tel:`+ data.inputPhone + `"><span id="userFname" style="color: #f277e7 !important;">` + formatPhone(data.inputPhone) + `</span></a>
         </p>`
     } else if (data.talkFirst !== undefined) {
         clientActivelyMsg = `<p className="fw-7" style="font-weight: 700;
         font-size: 1.5rem; color: #fff;">
             <span id="userFname">`+ capitalize(data.name) + `</span>, would like to talk first<br/>on ` + pstFORM(data.talkFirst) + `
             <br/>
-            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.inputPhone) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+            <a style="color: #f277e7 !important;" href="tel:`+ data.inputPhone + `"><span id="userFname" style="color: #f277e7 !important;">` + formatPhone(data.inputPhone) + `</span></a>
         </p>`
     } else {
         // connectwithLender
@@ -54,7 +54,7 @@ function mailToAdmin(toMail, subject, data, liveSiteAdd) {
         font-size: 1.5rem; color: #fff;">
             <span id="userFname">`+ capitalize(data.name) + `</span>, says you already talked to the lead
             <br/>
-            <a style="color: #f277e7 !important;" href="tel:`+ formatPhone(data.inputPhone) + `"><span id="userFname" style="color: #f277e7 !important;">` + data.phoneNumber + `</span></a>
+            <a style="color: #f277e7 !important;" href="tel:`+ data.inputPhone + `"><span id="userFname" style="color: #f277e7 !important;">` + formatPhone(data.inputPhone) + `</span></a>
         </p>`
     }
     html = `<!DOCTYPE html>
